@@ -48,3 +48,29 @@ sqrt(min(gbm.fit$cv.error))
 
 # plot loss function as a result of n trees added to the ensemble
 gbm.perf(gbm.fit, method = "cv")
+
+# for reproducibility
+set.seed(123)
+
+# train GBM model
+gbm.fit2 <- gbm(
+  formula = Sale_Price ~ .,
+  distribution = "gaussian",
+  data = ames_train,
+  n.trees = 5000,
+  interaction.depth = 3,
+  shrinkage = 0.1,
+  cv.folds = 5,
+  n.cores = NULL, # will use all cores by default
+  verbose = FALSE
+)  
+
+# find index for n trees with minimum CV error
+min_MSE <- which.min(gbm.fit2$cv.error)
+
+# get MSE and compute RMSE
+sqrt(gbm.fit2$cv.error[min_MSE])
+## [1] 23112.1
+
+# plot loss function as a result of n trees added to the ensemble
+gbm.perf(gbm.fit2, method = "cv")
